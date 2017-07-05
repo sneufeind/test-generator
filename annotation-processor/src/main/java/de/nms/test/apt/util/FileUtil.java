@@ -16,7 +16,8 @@ public class FileUtil {
 	static final String TEST_PATH = "/src/test/java/";
 
 	public static String getRootPath() {
-		return new File(".").getAbsolutePath();
+		String rootPath = Paths.get(new File(".").getAbsolutePath()).getParent().toFile().getAbsolutePath();
+		return rootPath;
 	}
 
 	public static File createJavaSrcFile(final Path dirPath, final String javaClassName) {
@@ -28,11 +29,11 @@ public class FileUtil {
 		return testPath;
 	}
 
-	public static URI findJavaClass(String packageName, String simpleClassName, boolean isInSrcPath)
+	public static URI findJavaClassPath(String packageName, String origClassName, boolean isInSrcPath)
 			throws IOException {
 		final URI[] helper = new URI[1];
 
-		String target = StringUtil.replaceDotsWithSlashes(packageName + ".") + simpleClassName + ".java";
+		String target = StringUtil.replaceDotsWithSlashes(packageName + ".") + origClassName + ".java";
 		String searchPath = getRootPath() + (isInSrcPath ? SOURCE_PATH : TEST_PATH);
 		Files.walkFileTree(Paths.get(searchPath), new SimpleFileVisitor<Path>() {
 			@Override

@@ -1,8 +1,11 @@
 package de.nms.test.apt.processor;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,6 +20,9 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.JavaCompiler;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
 
 import de.nms.test.annotation.GenerateNoTestStub;
 import de.nms.test.annotation.GenerateTestStub;
@@ -25,23 +31,29 @@ import de.nms.test.apt.model.AnnotatedTestClass;
 
 public class TestingAnnotationProcessor extends AbstractProcessor {
 
-	private Filer filer;
-	private Messager messager;
-	private Elements elementUtils;
-	private Types typeUtils;
-
 	private static final Map<Class<?>, AnnotatedElementProcessor> ANNOTATIONS = new HashMap<>();
-
 	static {
 		ANNOTATIONS.put(GenerateTestStub.class, new GenerateTestStubAnnotatedElementProcessor());
 		ANNOTATIONS.put(GenerateNoTestStub.class, new GenerateNoTestStubAnnotatedElementProcessor());
 	}
+
+	private Filer filer;
+	private Messager messager;
+	private Elements elementUtils;
+	private Types typeUtils;
 
 	/**
 	 * parameterless Constructor is needed
 	 */
 	public TestingAnnotationProcessor() {
 		super();
+	}
+
+	private static StandardJavaFileManager getJavaFileManager() {
+		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		final Locale locale = Locale.getDefault();
+		final Charset encoding = Charset.defaultCharset();
+		return compiler.getStandardFileManager(null, locale, encoding);
 	}
 
 	@Override
@@ -58,22 +70,29 @@ public class TestingAnnotationProcessor extends AbstractProcessor {
 		printMessage(Kind.NOTE, "TestingAnnotationProcessor processing...", null); //$NON-NLS-1$
 		final Map<String, AnnotatedTestClass> classMap = new HashMap<>();
 
-		// collect all methods and classes annotated with @GenerateTestStub
+		// COLLECT all methods and classes annotated with @GenerateTestStub
 		ANNOTATIONS.get(GenerateTestStub.class).process(elementUtils, roundEnv, classMap);
 
-		// remove all methods and classes annotated with @GenerateNoTestStub
+		// REMOVE all methods and classes annotated with @GenerateNoTestStub
 		ANNOTATIONS.get(GenerateNoTestStub.class).process(elementUtils, roundEnv, classMap);
 
-		// generate all non-exisiting elements annotated with @GenerateTestStub
+		// GENERATE all non-exisiting elements annotated with @GenerateTestStub
+		final StandardJavaFileManager fileManager = getJavaFileManager();
+		final TestCaseGenerator generator = new TestCaseGenerator();
 		for (final AnnotatedTestClass testClass : classMap.values()) {
 			printMessage(Kind.NOTE, "generating testclass " + testClass.getCanonicalTestClassName(), null);
 			try {
-				TestCaseGenerator.generateTestClass(filer, testClass);
-			} catch (IOException | ClassNotFoundException e) {
+				generator.generateTestClass(fileManager, filer, testClass);
+			} catch (IOException | ClassNotFoundException | URISyntaxException e) {
 				printMessage(Kind.ERROR, "Failed to generate testclass " + testClass.getCanonicalTestClassName(), null);
 			}
 		}
 
+		try {
+			fileManager.close();
+		} catch (IOException e) {
+			printMessage(Kind.ERROR, "Failed to close file manager!", null);
+		}
 		return true;
 	}
 

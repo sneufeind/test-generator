@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Test;
@@ -16,9 +17,8 @@ public class FileUtilTest {
 		// Arrange
 		URL location = FileUtilTest.class.getProtectionDomain().getCodeSource().getLocation(); // points
 																								// to
-																								// <root>/target/test-classes
-		String expectedPath = Paths.get(Paths.get(location.toURI()).getParent().getParent().toString(), ".").toFile()
-				.getAbsolutePath();
+																								// file://<root>/target/test-classes
+		String expectedPath = Paths.get(location.toURI()).getParent().getParent().toString();
 		// Act
 		String rootPath = FileUtil.getRootPath();
 		// Assert
@@ -43,6 +43,7 @@ public class FileUtilTest {
 		String rootPath = FileUtil.getRootPath();
 		String sourcePath = rootPath + File.separator + FileUtil.SOURCE_PATH;
 		String expectedTestPath = rootPath + File.separator + FileUtil.TEST_PATH;
+
 		// Act
 		String testPath = FileUtil.switchToTestSrcPath(sourcePath);
 		// Assert
@@ -50,14 +51,17 @@ public class FileUtilTest {
 	}
 
 	@Test
-	public void testFindJavaClass() throws Exception {
+	public void testFindJavaClassPath() throws Exception {
 		// Arrange
 		String packageName = FileUtil.class.getPackage().getName();
-		String simpleClassName = FileUtil.class.getSimpleName();
-		String expectedTestPath = "file:///C:/Users/sneuf/SWE/github/test-generator/annotation-processor/./src/main/java/de/nms/test/apt/util/FileUtil.java";
+		String origClassName = FileUtil.class.getSimpleName();
+
+		String rootPath = FileUtil.getRootPath();
+		Path path = Paths.get(rootPath, FileUtil.SOURCE_PATH, StringUtil.replaceDotsWithSlashes(packageName + "."));
+		URI expectedSrcPath = FileUtil.createJavaSrcFile(path, origClassName).toURI();
 		// Act
-		URI testPath = FileUtil.findJavaClass(packageName, simpleClassName, true);
+		URI testPath = FileUtil.findJavaClassPath(packageName, origClassName, true);
 		// Assert
-		assertEquals(expectedTestPath, testPath.toString());
+		assertEquals(expectedSrcPath.getPath(), testPath.getPath());
 	}
 }
