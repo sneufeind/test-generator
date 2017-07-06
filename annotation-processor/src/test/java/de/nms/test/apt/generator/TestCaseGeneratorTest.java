@@ -62,7 +62,7 @@ public class TestCaseGeneratorTest {
 	}
 
 	private String getTestSrcPath(String packageName, String simpleName) throws IOException, URISyntaxException {
-		URI javaClassPath = FileUtil.findJavaClassPath(packageName, simpleName, true);
+		URI javaClassPath = FileUtil.findJavaClassPath(packageName, simpleName);
 		String testSrcFile = FileUtil.switchToTestSrcPath(Paths.get(javaClassPath).getParent().toUri().toString());
 		return new File(new URI(testSrcFile)).getAbsolutePath();
 	}

@@ -60,7 +60,7 @@ public class FileUtilTest {
 		Path path = Paths.get(rootPath, FileUtil.SOURCE_PATH, StringUtil.replaceDotsWithSlashes(packageName + "."));
 		URI expectedSrcPath = FileUtil.createJavaSrcFile(path, origClassName).toURI();
 		// Act
-		URI testPath = FileUtil.findJavaClassPath(packageName, origClassName, true);
+		URI testPath = FileUtil.findJavaClassPath(packageName, origClassName);
 		// Assert
 		assertEquals(expectedSrcPath.getPath(), testPath.getPath());
 	}

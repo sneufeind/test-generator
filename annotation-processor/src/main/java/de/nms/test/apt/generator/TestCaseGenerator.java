@@ -29,7 +29,7 @@ public class TestCaseGenerator {
 		final String testClassName = testClass.getSimpleTestClassName();
 		final String packageName = testClass.getPackageName();
 
-		URI srcPath = FileUtil.findJavaClassPath(packageName, origClassName, true);
+		URI srcPath = FileUtil.findJavaClassPath(packageName, origClassName);
 		if (srcPath == null) {
 			final String message = String.format("Could not find java class '%s'!",
 					origClassName != null ? origClassName : "null");

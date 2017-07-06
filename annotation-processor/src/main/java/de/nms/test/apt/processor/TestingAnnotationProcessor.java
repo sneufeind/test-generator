@@ -84,6 +84,7 @@ public class TestingAnnotationProcessor extends AbstractProcessor {
 			try {
 				generator.generateTestClass(fileManager, filer, testClass);
 			} catch (IOException | ClassNotFoundException | URISyntaxException e) {
+				printMessage(Kind.ERROR, e.getMessage(), null);
 				printMessage(Kind.ERROR, "Failed to generate testclass " + testClass.getCanonicalTestClassName(), null);
 			}
 		}

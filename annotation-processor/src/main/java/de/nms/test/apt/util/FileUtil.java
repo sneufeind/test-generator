@@ -29,12 +29,11 @@ public class FileUtil {
 		return testPath;
 	}
 
-	public static URI findJavaClassPath(String packageName, String origClassName, boolean isInSrcPath)
-			throws IOException {
+	public static URI findJavaClassPath(String packageName, String origClassName) throws IOException {
 		final URI[] helper = new URI[1];
 
 		String target = StringUtil.replaceDotsWithSlashes(packageName + ".") + origClassName + ".java";
-		String searchPath = getRootPath() + (isInSrcPath ? SOURCE_PATH : TEST_PATH);
+		String searchPath = getRootPath();
 		Files.walkFileTree(Paths.get(searchPath), new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
