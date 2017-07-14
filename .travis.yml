@@ -1,7 +1,23 @@
 language: java
 
+env:
+  - MAVEN_VERSION=3.3.9
+
+install:
+  - "mvn -N io.takari:maven:wrapper -Dmaven=${MAVEN_VERSION}"
+
+script:
+  - "./mvnw --show-version --errors --batch-mode clean install"
+
 jdk:
   - oraclejdk8
   - oraclejdk7
-  
-script: mvn clean install
+  - openjdk7
+
+cache:
+  directories:
+  - $HOME/.m2
+
+branches:
+  except:
+    - gh-pages
