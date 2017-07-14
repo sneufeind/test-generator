@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 
@@ -23,7 +22,7 @@ import de.nms.test.apt.util.FileUtil;
 
 public class TestCaseGenerator {
 
-	synchronized public void generateTestClass(final StandardJavaFileManager fileManager, final Filer filer,
+	synchronized public void generateTestClass(final StandardJavaFileManager fileManager,
 			final AnnotatedTestClass testClass) throws IOException, ClassNotFoundException, URISyntaxException {
 		final String origClassName = testClass.getSimpleOriginalClassName();
 		final String testClassName = testClass.getSimpleTestClassName();

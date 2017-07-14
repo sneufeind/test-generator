@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -18,7 +17,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
@@ -37,10 +35,8 @@ public class TestingAnnotationProcessor extends AbstractProcessor {
 		ANNOTATIONS.put(GenerateNoTestStub.class, new GenerateNoTestStubAnnotatedElementProcessor());
 	}
 
-	private Filer filer;
 	private Messager messager;
 	private Elements elementUtils;
-	private Types typeUtils;
 
 	/**
 	 * parameterless Constructor is needed
@@ -59,10 +55,8 @@ public class TestingAnnotationProcessor extends AbstractProcessor {
 	@Override
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
-		this.filer = processingEnv.getFiler();
 		this.messager = processingEnv.getMessager();
 		this.elementUtils = processingEnv.getElementUtils();
-		this.typeUtils = processingEnv.getTypeUtils();
 	}
 
 	@Override
@@ -82,7 +76,7 @@ public class TestingAnnotationProcessor extends AbstractProcessor {
 		for (final AnnotatedTestClass testClass : classMap.values()) {
 			printMessage(Kind.NOTE, "generating testclass " + testClass.getCanonicalTestClassName(), null);
 			try {
-				generator.generateTestClass(fileManager, filer, testClass);
+				generator.generateTestClass(fileManager, testClass);
 			} catch (IOException | ClassNotFoundException | URISyntaxException e) {
 				printMessage(Kind.ERROR, e.getMessage(), null);
 				printMessage(Kind.ERROR, "Failed to generate testclass " + testClass.getCanonicalTestClassName(), null);

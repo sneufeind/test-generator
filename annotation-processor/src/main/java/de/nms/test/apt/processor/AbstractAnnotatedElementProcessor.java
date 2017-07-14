@@ -38,12 +38,14 @@ abstract class AbstractAnnotatedElementProcessor implements AnnotatedElementProc
 				.getElementsAnnotatedWith(annotationClass);
 		if (testedAnnotatedElements != null) {
 			for (Element element : testedAnnotatedElements) {
+				// class
 				if (TypeElement.class.isInstance(element)) {
 					final TypeElement classElement = TypeElement.class.cast(element);
 					if (isClassElementForTestRelevant(classElement)) {
 						processClassElement(classElement, classMap);
 					}
 				} else if (ExecutableElement.class.isInstance(element)) {
+					// methods
 					final ExecutableElement methodElement = ExecutableElement.class.cast(element);
 					if (isMethodElementForTestRelevant(methodElement)) {
 						final Element enclosingElement = methodElement.getEnclosingElement();
@@ -91,9 +93,5 @@ abstract class AbstractAnnotatedElementProcessor implements AnnotatedElementProc
 
 	protected String getTestMethodName(final ExecutableElement methodElement) {
 		return methodElement.getSimpleName().toString();
-	}
-
-	protected Elements getElementUtils() {
-		return elementUtils;
 	}
 }
