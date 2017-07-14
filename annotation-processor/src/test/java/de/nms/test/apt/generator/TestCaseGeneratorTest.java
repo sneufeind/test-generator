@@ -11,7 +11,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -31,11 +30,9 @@ public class TestCaseGeneratorTest {
 
 	StandardJavaFileManager fileManager;
 	AnnotatedTestClass testClass;
-	Filer filer;
 
 	@Before
 	public void setUp() {
-		this.filer = null;
 		this.testClass = new AnnotatedTestClass(PACKAGE_NAME, SIMPLE_NAME) {
 			@Override
 			public String getSimpleTestClassName() {
@@ -55,7 +52,7 @@ public class TestCaseGeneratorTest {
 		when(javaFileObject.openWriter()).thenReturn(writer);
 		InternalTestCaseGenerator generator = new InternalTestCaseGenerator(javaFileObject);
 		// Act
-		generator.generateTestClass(this.fileManager, this.filer, this.testClass);
+		generator.generateTestClass(this.fileManager, this.testClass);
 		// Assert
 		assertEquals(this.fileManager, generator.fileManager);
 		assertEquals(expectedTestSrcFile, generator.javaSrcFile.getAbsolutePath());
