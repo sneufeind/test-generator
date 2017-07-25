@@ -27,15 +27,15 @@
     </licenses>
 
     <organization>
-        <name></name>
-        <url></url>
+        <name>N3 Micro-Systems</name>
+        <url>https://www.n3misys.de</url>
     </organization>
 
     <developers>
         <developer>
-            <id>sne</id>
+            <id>sneufeind</id>
             <name>Sven Neufeind</name>
-            <email>sneufeind@web.de</email>
+            <email>developer@n3misys.de</email>
             <roles>
                 <role>Lead</role>
                 <role>Committer</role>
