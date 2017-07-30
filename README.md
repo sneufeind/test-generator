@@ -25,8 +25,9 @@ Now he explicitly decides against writing an unit test, if it doesn't make sense
         <annotationProcessors>
           <proc>de.nms.test.apt.processor.TestingAnnotationProcessor</proc>
         </annotationProcessors>
-      </plugin>
-    </plugins>
+      </configuration>
+    </plugin>
+  </plugins>
 </build>
 ```
 2. Add the `annotations`-dependency to your project:
